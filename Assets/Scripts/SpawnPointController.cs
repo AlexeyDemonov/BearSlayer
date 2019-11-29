@@ -15,12 +15,6 @@ public class SpawnPointController : MonoBehaviour
         get => Vector3.Distance(this.transform.position, ObjectToAvoid.transform.position) > DoNotSpawnIfObjectToAvoidIsCloserThan;
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        Spawn();
-    }
-
     public void Spawn()
     {
         if(_currentInstance == null && ObjectToAvoidIsFar)

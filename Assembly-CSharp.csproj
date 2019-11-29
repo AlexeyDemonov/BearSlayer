@@ -60,16 +60,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\AnimationEventProvider.cs" />
-    <Compile Include="Assets\Scripts\BearController.cs" />
-    <Compile Include="Assets\Scripts\CameraControl.cs" />
-    <Compile Include="Assets\Scripts\GameCharacterController.cs" />
+    <Compile Include="Assets\Scripts\BearsScripts\BearController.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\AnimationEventProvider.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\GameCharacterController.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\IDestroyReporter.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
-    <Compile Include="Assets\Scripts\IDestroyReporter.cs" />
-    <Compile Include="Assets\Scripts\ItemController.cs" />
-    <Compile Include="Assets\Scripts\ItemTypeEnum.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
-    <Compile Include="Assets\Scripts\PlayerInventoryController.cs" />
+    <Compile Include="Assets\Scripts\ItemsScripts\ItemController.cs" />
+    <Compile Include="Assets\Scripts\ItemsScripts\ItemTypeEnum.cs" />
+    <Compile Include="Assets\Scripts\PlayerControl\CameraControl.cs" />
+    <Compile Include="Assets\Scripts\PlayerControl\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\PlayerControl\PlayerInventoryController.cs" />
     <Compile Include="Assets\Scripts\SpawnPointController.cs" />
     <Compile Include="Assets\Scripts\WaypointController.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
