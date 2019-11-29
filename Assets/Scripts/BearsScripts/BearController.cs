@@ -7,11 +7,13 @@ public class BearController : GameCharacterController, IDestroyReporter
 {
     //============================================================
     //Fields
-    public float PlayerDetectionDistance;
+    public float PlayerDetectionDistanceMin;
+    public float PlayerDetectionDistanceMax;
     public float TryDetectEveryXSeconds;
     public float DestroyAfterDeathSeconds;
 
     static PlayerController _playerController;
+    float _detectionDistance;
     WaitForSeconds _detectionWait;
     Vector3 _currentPlayerPosition;
 
@@ -34,6 +36,7 @@ public class BearController : GameCharacterController, IDestroyReporter
         if(_playerController == null)
             _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
 
+        _detectionDistance = UnityEngine.Random.Range(PlayerDetectionDistanceMin, PlayerDetectionDistanceMax);
         _detectionWait = new WaitForSeconds(TryDetectEveryXSeconds);
 
         BodyAnimationEventProvider.Event_Attack += Handle_AttackAnimationEvent;
@@ -103,7 +106,7 @@ public class BearController : GameCharacterController, IDestroyReporter
     {
         yield return _detectionWait;
 
-        while (Vector3.Distance(this.transform.position, _playerController.transform.position) > PlayerDetectionDistance)
+        while (Vector3.Distance(this.transform.position, _playerController.transform.position) > _detectionDistance)
         {
             yield return _detectionWait;
         }
