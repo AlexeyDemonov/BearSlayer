@@ -7,11 +7,11 @@ public class BearController : GameCharacterController, IDestroyReporter
 {
     //============================================================
     //Fields
-    public PlayerController PlayerController;
     public float PlayerDetectionDistance;
     public float TryDetectEveryXSeconds;
     public float DestroyAfterDeathSeconds;
 
+    static PlayerController _playerController;
     WaitForSeconds _detectionWait;
     Vector3 _currentPlayerPosition;
 
@@ -23,7 +23,7 @@ public class BearController : GameCharacterController, IDestroyReporter
     //Properties
     bool PlayerInAttackDistance
     {
-        get => Vector3.Distance(this.transform.position, PlayerController.transform.position) <= AttackDistance;
+        get => Vector3.Distance(this.transform.position, _playerController.transform.position) <= AttackDistance;
     }
 
     //============================================================
@@ -31,6 +31,9 @@ public class BearController : GameCharacterController, IDestroyReporter
     // Start is called before the first frame update
     void Start()
     {
+        if(_playerController == null)
+            _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+
         _detectionWait = new WaitForSeconds(TryDetectEveryXSeconds);
 
         BodyAnimationEventProvider.Event_Attack += Handle_AttackAnimationEvent;
@@ -43,9 +46,9 @@ public class BearController : GameCharacterController, IDestroyReporter
     {
         if (PlayerInAttackDistance)
         {
-            if(!PlayerController.CharacterIsDead)
+            if(!_playerController.CharacterIsDead)
             {
-                PlayerController.TakeDamage(Attack);
+                _playerController.TakeDamage(Attack);
             }
             else
             {
@@ -62,7 +65,7 @@ public class BearController : GameCharacterController, IDestroyReporter
     {
         if (PlayerInAttackDistance)
         {
-            if(PlayerController.CharacterIsDead)
+            if(_playerController.CharacterIsDead)
             {
                 BodyAnimator.SetTrigger("Stop");
             }
@@ -100,7 +103,7 @@ public class BearController : GameCharacterController, IDestroyReporter
     {
         yield return _detectionWait;
 
-        while (Vector3.Distance(this.transform.position, PlayerController.transform.position) > PlayerDetectionDistance)
+        while (Vector3.Distance(this.transform.position, _playerController.transform.position) > PlayerDetectionDistance)
         {
             yield return _detectionWait;
         }
@@ -116,7 +119,7 @@ public class BearController : GameCharacterController, IDestroyReporter
 
         BodyAnimator.SetTrigger("Run");
 
-        _currentPlayerPosition = PlayerController.transform.position;
+        _currentPlayerPosition = _playerController.transform.position;
         NavMeshAgent.SetDestination(_currentPlayerPosition);
         StartCoroutine(AttackWhenReachPlayer());
     }
@@ -126,9 +129,9 @@ public class BearController : GameCharacterController, IDestroyReporter
     {
         while (!PlayerInAttackDistance)
         {
-            if(PlayerController.transform.position != _currentPlayerPosition)
+            if(_playerController.transform.position != _currentPlayerPosition)
             {
-                _currentPlayerPosition = PlayerController.transform.position;
+                _currentPlayerPosition = _playerController.transform.position;
                 NavMeshAgent.SetDestination(_currentPlayerPosition);
             }
 

@@ -10,7 +10,7 @@ public class ItemController : MonoBehaviour, IDestroyReporter
     public ItemTypeEnum GiveMeYourPowers()
     {
         Destroying?.Invoke();
-        Destroy(this.gameObject, 0.5f);
+        Destroy(this.gameObject);
         return ItemType;
     }
 }
