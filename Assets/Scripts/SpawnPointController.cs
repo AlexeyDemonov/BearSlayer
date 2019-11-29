@@ -1,33 +1,29 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class SpawnPointController : MonoBehaviour
 {
-    public GameObject ObjectToSpawn;
-    public GameObject ObjectToAvoid;
-
-    [Range(0f,100f)]
-    public float DoNotSpawnIfObjectToAvoidIsCloserThan = 10f;
+    public Animator SpawnAnimator;
 
     IDestroyReporter _currentInstance;
 
-    bool ObjectToAvoidIsFar
+    public bool IsVacant
     {
-        get => Vector3.Distance(this.transform.position, ObjectToAvoid.transform.position) > DoNotSpawnIfObjectToAvoidIsCloserThan;
+        get => _currentInstance == null;
     }
 
-    public void Spawn()
+    public void Spawn(GameObject objectToSpawn)
     {
-        if(_currentInstance == null && ObjectToAvoidIsFar)
+        var instance = Instantiate(/*what*/objectToSpawn, /*where*/this.transform.position, /*rotation*/Quaternion.Euler(x:0f, y:Random.Range(0f,360f), z:0f));
+
+        var destroyReporter = instance.GetComponent(typeof(IDestroyReporter)) as IDestroyReporter;
+
+        if(destroyReporter != null)
         {
-            var instance = Instantiate(/*what*/ObjectToSpawn, /*where*/this.transform.position, /*rotation*/Quaternion.Euler(x:0f, y:Random.Range(0f,360f), z:0f));
-
-            var destroyReporter = instance.GetComponent(typeof(IDestroyReporter)) as IDestroyReporter;
-
-            if(destroyReporter != null)
-            {
-                _currentInstance = destroyReporter;
-                _currentInstance.Destroying += () => _currentInstance = null;
-            }
+            _currentInstance = destroyReporter;
+            _currentInstance.Destroying += () => _currentInstance = null;
         }
+
+        SpawnAnimator.SetTrigger("Spawn");
     }
 }
