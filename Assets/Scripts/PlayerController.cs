@@ -7,6 +7,8 @@ public class PlayerController : GameCharacterController
 {
     //============================================================
     //Fields
+    public PlayerInventoryController PlayerInventory;
+
     public float WalkSpeed;
     public float RunSpeed;
     public float WalkToRunSwitchDistance;
@@ -14,14 +16,26 @@ public class PlayerController : GameCharacterController
     public float StopAndIdleDistance;
     public float ItemPickupDistance;
 
-    PlayerInventoryController PlayerInventory;
 
     WaitForSeconds _halfSecondWait = new WaitForSeconds(0.5f);
-    WaitForSeconds _itemDuration = new WaitForSeconds(0.5f);
 
     BearController _bearToAttack = null;
     ItemController _itemToPickup = null;
 
+    //============================================================
+    //Properties
+    new public int Health
+    {
+        get => base.Health;
+
+        set
+        {
+            base.Health += value;
+
+            if(base.Health > 100)
+                base.Health = 100;
+        }
+    }
 
     //============================================================
     //Methods
