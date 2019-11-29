@@ -1,11 +1,15 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class ItemController : MonoBehaviour
+public class ItemController : MonoBehaviour, IDestroyReporter
 {
     public ItemTypeEnum ItemType;
 
+    public event Action Destroying;
+
     public ItemTypeEnum GiveMeYourPowers()
     {
+        Destroying?.Invoke();
         Destroy(this.gameObject, 0.5f);
         return ItemType;
     }

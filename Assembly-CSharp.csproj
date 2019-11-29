@@ -65,6 +65,7 @@
     <Compile Include="Assets\Scripts\CameraControl.cs" />
     <Compile Include="Assets\Scripts\GameCharacterController.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
+    <Compile Include="Assets\Scripts\IDestroyReporter.cs" />
     <Compile Include="Assets\Scripts\ItemController.cs" />
     <Compile Include="Assets\Scripts\ItemTypeEnum.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />

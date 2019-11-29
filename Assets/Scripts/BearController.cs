@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using System;
 
-public class BearController : GameCharacterController
+public class BearController : GameCharacterController, IDestroyReporter
 {
     //============================================================
     //Fields
@@ -13,6 +14,10 @@ public class BearController : GameCharacterController
 
     WaitForSeconds _detectionWait;
     Vector3 _currentPlayerPosition;
+
+    //============================================================
+    //Events
+    public event Action Destroying;
 
     //============================================================
     //Properties
@@ -82,6 +87,7 @@ public class BearController : GameCharacterController
         {
             BodyAnimator.SetTrigger("Die");
             NavMeshAgent.isStopped = true;
+            Destroying?.Invoke();
             Destroy(this.gameObject, DestroyAfterDeathSeconds);
         }
     }
