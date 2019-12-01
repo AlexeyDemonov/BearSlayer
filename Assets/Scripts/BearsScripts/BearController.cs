@@ -3,23 +3,27 @@ using UnityEngine.AI;
 using System.Collections;
 using System;
 
-public class BearController : GameCharacterController, IDestroyReporter
+public class BearController : GameCharacterController, IDestroyExtensioner
 {
     //============================================================
     //Fields
     public float PlayerDetectionDistanceMin;
     public float PlayerDetectionDistanceMax;
     public float TryDetectEveryXSeconds;
+    public int StunTimes;
     public float DestroyAfterDeathSeconds;
+
 
     static PlayerController _playerController;
     float _detectionDistance;
     WaitForSeconds _detectionWait;
     Vector3 _currentPlayerPosition;
+    int _stunCounter = 0;
 
     //============================================================
     //Events
     public event Action Destroying;
+    public static event Action AnotherBearDied;
 
     //============================================================
     //Properties
@@ -66,15 +70,17 @@ public class BearController : GameCharacterController, IDestroyReporter
 
     protected override void Handle_DamagedAnimationEnded()
     {
-        if (PlayerInAttackDistance)
+        if (PlayerInAttackDistance && !_playerController.CharacterIsDead && _stunCounter < StunTimes)
         {
-            if(_playerController.CharacterIsDead)
-            {
-                BodyAnimator.SetTrigger("Stop");
-            }
+            _stunCounter++;
+        }
+        else if(_playerController.CharacterIsDead)
+        {
+            BodyAnimator.SetTrigger("Stop");
         }
         else
         {
+            _stunCounter = 0;
             RunToPlayerAndAttack();
         }
     }
@@ -84,6 +90,8 @@ public class BearController : GameCharacterController, IDestroyReporter
         StopAllCoroutines();
         
         base.TakeDamage(damage);
+        
+        _stunCounter = 0;
 
         if(!CharacterIsDead)
         {
@@ -93,12 +101,17 @@ public class BearController : GameCharacterController, IDestroyReporter
         {
             BodyAnimator.SetTrigger("Die");
             NavMeshAgent.isStopped = true;
+            AnotherBearDied?.Invoke();
             Destroying?.Invoke();
             Destroy(this.gameObject, DestroyAfterDeathSeconds);
         }
     }
 
-    
+    void IForceDestroyer.ForceDestroy()
+    {
+        Destroying?.Invoke();
+        Destroy(this.gameObject);
+    }
 
     //============================================================
     //Coroutines

@@ -63,7 +63,9 @@
     <Compile Include="Assets\Scripts\BearsScripts\BearController.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\AnimationEventProvider.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\GameCharacterController.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\IDestroyExtensioner.cs" />
     <Compile Include="Assets\Scripts\CommonScripts\IDestroyReporter.cs" />
+    <Compile Include="Assets\Scripts\CommonScripts\IForceDestroyer.cs" />
     <Compile Include="Assets\Scripts\GameController.cs" />
     <Compile Include="Assets\Scripts\ItemsScripts\ItemController.cs" />
     <Compile Include="Assets\Scripts\ItemsScripts\ItemTypeEnum.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Assets\Scripts\PlayerControl\PlayerInventoryController.cs" />
     <Compile Include="Assets\Scripts\SpawnPointController.cs" />
     <Compile Include="Assets\Scripts\SpawnSystem.cs" />
+    <Compile Include="Assets\Scripts\UIController.cs" />
     <Compile Include="Assets\Scripts\WaypointController.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Documents/MyUnityProjects/ITVDN_UnityStarter_Finale/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>

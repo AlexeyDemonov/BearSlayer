@@ -28,6 +28,7 @@ public class SpawnSystem : MonoBehaviour
     public float SpawnEveryXSeconds;
     public int IncreaseSpawnEveryXTurns;
 
+    Coroutine _spawning;
     WaitForSeconds _interSpawnWait;
     int _spawnRateThisTurn;
     int _turnCounter = 0;
@@ -36,8 +37,35 @@ public class SpawnSystem : MonoBehaviour
     private void Start()
     {
         _interSpawnWait = new WaitForSeconds(SpawnEveryXSeconds);
+        PlayerController.PlayerDied += StopSpawning;
+    }
+
+    public void StartSpawning(int bearCoeff)
+    {
+        BearOverItemsSpawnChance = bearCoeff;
+        StartSpawning();
+    }
+
+    public void StartSpawning()
+    {
         _spawnRateThisTurn = (StartSpawnAmount > SpawnPoints.Length) ? SpawnPoints.Length : StartSpawnAmount;
-        StartCoroutine(SpawnOverTime());
+        _turnCounter = 0;
+        _spawning = StartCoroutine(SpawnOverTime());
+    }
+
+    public void RestartSpawning()
+    {
+        foreach (var point in SpawnPoints)
+        {
+            point.VacantThePoint();
+        }
+
+        StartSpawning();
+    }
+
+    void StopSpawning()
+    {
+        StopCoroutine(_spawning);
     }
 
     IEnumerator SpawnOverTime()
@@ -59,7 +87,7 @@ public class SpawnSystem : MonoBehaviour
                 }
                 else
                 {
-                    //I want it to skip this spawn if point is occupied or close to Player, so that is intentional
+                    //I want it to just skip this spawn if point is occupied or close to Player, so that is intentional
                 }
             }
 

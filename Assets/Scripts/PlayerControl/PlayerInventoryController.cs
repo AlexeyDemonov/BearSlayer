@@ -31,6 +31,7 @@ public class PlayerInventoryController : MonoBehaviour
     private void Awake()
     {
         _duration = new WaitForSeconds(ItemDurationInSeconds);
+        PlayerController.PlayerDied += RemoveAllEffects;
     }
 
     public void AquireItem(ItemTypeEnum itemType)
@@ -73,21 +74,46 @@ public class PlayerInventoryController : MonoBehaviour
         }
     }
 
-    //============================================================
-    //Coroutines
-    IEnumerator RemoveArmorAfterTime()
+    void RemoveAllEffects()
     {
-        yield return _duration;
+        if(ArmorIndicator.activeSelf)
+        {
+            StopCoroutine(_armorDurationCoroutine);
+            RemoveArmor();
+        }
+
+        if(SwordIndicator.activeSelf)
+        {
+            StopCoroutine(_swordDurationCoroutine);
+            RemoveSword();
+        }
+    }
+
+    void RemoveArmor()
+    {
         PlayerController.Defense -= ArmorItemDefenseAddition;
         _armorDurationCoroutine = null;
         ArmorIndicator.SetActive(false);
     }
 
-    IEnumerator RemoveSwordAfterTime()
+    void RemoveSword()
     {
-        yield return _duration;
         PlayerController.Attack -= SwordItemDamageAddition;
         _swordDurationCoroutine = null;
         SwordIndicator.SetActive(false);
+    }
+
+    //============================================================
+    //Coroutines
+    IEnumerator RemoveArmorAfterTime()
+    {
+        yield return _duration;
+        RemoveArmor();
+    }
+
+    IEnumerator RemoveSwordAfterTime()
+    {
+        yield return _duration;
+        RemoveSword();
     }
 }

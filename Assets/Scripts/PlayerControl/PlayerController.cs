@@ -1,13 +1,16 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
-
+using System;
+using UnityEngine.UI;
 
 public class PlayerController : GameCharacterController
 {
     //============================================================
     //Fields
+    public Transform StartPosition;
     public PlayerInventoryController PlayerInventory;
+    public Slider HealthBar;
 
     public float WalkSpeed;
     public float RunSpeed;
@@ -30,12 +33,18 @@ public class PlayerController : GameCharacterController
 
         set
         {
-            base.Health += value;
+            base.Health = value;
 
             if(base.Health > 100)
                 base.Health = 100;
+
+            HealthBar.value = base.Health;
         }
     }
+
+    //============================================================
+    //Events
+    public static event Action PlayerDied;
 
     //============================================================
     //Methods
@@ -102,12 +111,21 @@ public class PlayerController : GameCharacterController
     public override void TakeDamage(int damage)
     {
         base.TakeDamage(damage);
+        HealthBar.value = Health;
 
         if/*now*/(CharacterIsDead)
         {
             StopPreviousActions();
             BodyAnimator.SetTrigger("Die");
+            PlayerDied?.Invoke();
         }
+    }
+
+    public void Revive()
+    {
+        this.transform.position = StartPosition.position;
+        BodyAnimator.SetTrigger("Stop");
+        Health = 100;
     }
 
     //============================================================
@@ -132,14 +150,6 @@ public class PlayerController : GameCharacterController
         BodyAnimator.SetTrigger("Stop");
     }
 
-    IEnumerator StopAndAttackWhenReachBear()
-    {
-        yield return StartCoroutine(RunUntilDistance(AttackDistance));
-
-        this.transform.LookAt(_bearToAttack.transform.position, Vector3.up);
-        BodyAnimator.SetTrigger("Attack");
-    }
-
     IEnumerator StopAndPickupWhenReachItem()
     {
         yield return StartCoroutine(RunUntilDistance(ItemPickupDistance));
@@ -148,6 +158,15 @@ public class PlayerController : GameCharacterController
 
         PlayerInventory.AquireItem(_itemToPickup.GiveMeYourPowers());
     }
+
+    IEnumerator StopAndAttackWhenReachBear()
+    {
+        yield return StartCoroutine(RunUntilDistance(AttackDistance));
+
+        this.transform.LookAt(_bearToAttack.transform.position, Vector3.up);
+        BodyAnimator.SetTrigger("Attack");
+    }
+
 
     //============================================================
     //Animation event handlers
