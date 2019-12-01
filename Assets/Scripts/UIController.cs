@@ -4,6 +4,8 @@ using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
+    //============================================================
+    //Fields
     public Animator UIAnimator;
 
     public Text TimeDisplay;
@@ -18,6 +20,8 @@ public class UIController : MonoBehaviour
     float _startTime = 0f;
     int _deadBearsCount = 0;
 
+    //============================================================
+    //Methods
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +30,14 @@ public class UIController : MonoBehaviour
         BearController.AnotherBearDied += () => { _deadBearsCount++; BearDisplay.text = _deadBearsCount.ToString(); };
         PlayerController.PlayerDied += () => { StopCoroutine(_timeUpdateCoroutine); StartCoroutine(FadeOutAfterWait()); };
     }
+
+    // Update is called every frame, if the MonoBehaviour is enabled
+    private void Update()
+    {
+        if(Input.GetButtonDown("Cancel"))
+            QuitGame();
+    }
+
 
     public void StartLevel()
     {
