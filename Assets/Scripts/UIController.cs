@@ -12,9 +12,11 @@ public class UIController : MonoBehaviour
     public Text BearDisplay;
 
     public float UpdateTimeCounterEveryXSeconds = 0.1f;
+    public float WaitXSecondsAfterPlayerDeath = 3f;
 
     WaitForSeconds _timeUpdateWait;
     Coroutine _timeUpdateCoroutine;
+    WaitForSeconds _funeralWait;
     float _startTime = 0f;
     int _deadBearsCount = 0;
 
@@ -22,29 +24,29 @@ public class UIController : MonoBehaviour
     void Start()
     {
         _timeUpdateWait = new WaitForSeconds(UpdateTimeCounterEveryXSeconds);
+        _funeralWait = new WaitForSeconds(WaitXSecondsAfterPlayerDeath);
         BearController.AnotherBearDied += () => { _deadBearsCount++; BearDisplay.text = _deadBearsCount.ToString(); };
-        PlayerController.PlayerDied += () => { StopCoroutine(_timeUpdateCoroutine); UIAnimator.SetTrigger("Exit"); };
+        PlayerController.PlayerDied += () => { StopCoroutine(_timeUpdateCoroutine); StartCoroutine(FadeOutAfterWait()); };
     }
 
     public void StartLevel()
     {
         UIAnimator.SetTrigger("Enter");
-        _timeUpdateCoroutine = StartCoroutine(UpdateTimeCounter());
-        DefaultCounters();
+        ResetCounters();
     }
 
     public void RestartLevel()
     {
         UIAnimator.SetTrigger("Repeat");
-        _timeUpdateCoroutine = StartCoroutine(UpdateTimeCounter());
-        DefaultCounters();
+        ResetCounters();
     }
 
-    void DefaultCounters()
+    void ResetCounters()
     {
         _startTime = Time.time;
         _deadBearsCount = 0;
         BearDisplay.text = "0";
+        _timeUpdateCoroutine = StartCoroutine(UpdateTimeCounter());
     }
 
     public void QuitGame()
@@ -80,5 +82,11 @@ public class UIController : MonoBehaviour
         }
 
         return $"{min.ToString("D2")}.{sec.ToString("D2")}:{ms.ToString("D3")}";
+    }
+
+    IEnumerator FadeOutAfterWait()
+    {
+        yield return _funeralWait;
+        UIAnimator.SetTrigger("Exit");
     }
 }

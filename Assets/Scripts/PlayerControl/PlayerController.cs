@@ -94,6 +94,7 @@ public class PlayerController : GameCharacterController
             _bearToAttack = bear;
             GoToPosition(_bearToAttack.gameObject.transform.position);
             StartCoroutine(StopAndAttackWhenReachBear());
+            StartCoroutine(KeepTrackingTheBear());
         }
     }
 
@@ -116,8 +117,10 @@ public class PlayerController : GameCharacterController
         if/*now*/(CharacterIsDead)
         {
             StopPreviousActions();
-            BodyAnimator.SetTrigger("Die");
+            NavMeshAgent.isStopped = true;
+            NavMeshAgent.velocity = Vector3.zero;
             PlayerDied?.Invoke();
+            BodyAnimator.SetTrigger("Die");
         }
     }
 
@@ -167,6 +170,23 @@ public class PlayerController : GameCharacterController
         BodyAnimator.SetTrigger("Attack");
     }
 
+    Vector3 _bearLastPosition = Vector3.zero;
+    IEnumerator KeepTrackingTheBear()
+    {
+        _bearLastPosition = _bearToAttack.transform.position;
+        yield return _halfSecondWait;
+
+        while(Vector3.Distance(_bearToAttack.transform.position, this.transform.position) > AttackDistance && NavMeshAgent.isStopped == false)
+        {
+            if(_bearLastPosition != _bearToAttack.transform.position)
+            {
+                _bearLastPosition = _bearToAttack.transform.position;
+                NavMeshAgent.SetDestination(_bearLastPosition);
+            }
+
+            yield return _halfSecondWait;
+        }
+    }
 
     //============================================================
     //Animation event handlers
