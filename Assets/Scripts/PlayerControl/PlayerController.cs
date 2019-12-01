@@ -173,6 +173,7 @@ public class PlayerController : GameCharacterController
     Vector3 _bearLastPosition = Vector3.zero;
     IEnumerator KeepTrackingTheBear()
     {
+
         _bearLastPosition = _bearToAttack.transform.position;
         yield return _halfSecondWait;
 
