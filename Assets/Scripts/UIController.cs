@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 
 public class UIController : MonoBehaviour
 {
@@ -70,12 +68,12 @@ public class UIController : MonoBehaviour
     //Not very effective, maybe refactor it later
     string FormatTime(float time)
     {
-        int totalms = (int)(time*1000f);
+        int totalms = (int)(time * 1000f);
         int ms = totalms % 1000;
         int sec = totalms / 1000;
         int min = 0;
 
-        if(sec > 60)
+        if (sec > 60)
         {
             min = sec / 60;
             sec = sec % 60;

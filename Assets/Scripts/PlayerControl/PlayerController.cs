@@ -1,7 +1,7 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
-using System;
 using UnityEngine.UI;
 
 public class PlayerController : GameCharacterController
@@ -9,6 +9,7 @@ public class PlayerController : GameCharacterController
     //============================================================
     //Fields
     public Transform StartPosition;
+
     public PlayerInventoryController PlayerInventory;
     public Slider HealthBar;
 
@@ -19,10 +20,11 @@ public class PlayerController : GameCharacterController
     public float StopAndIdleDistance;
     public float ItemPickupDistance;
 
-
     WaitForSeconds _halfSecondWait = new WaitForSeconds(0.5f);
 
     BearController _bearToAttack = null;
+    Vector3 _bearLastPosition = Vector3.zero;
+
     ItemController _itemToPickup = null;
 
     //============================================================
@@ -35,8 +37,10 @@ public class PlayerController : GameCharacterController
         {
             base.Health = value;
 
-            if(base.Health > 100)
+            if (base.Health > 100)
                 base.Health = 100;
+            if(base.Health < 0)
+                base.Health = 0;
 
             HealthBar.value = base.Health;
         }
@@ -48,14 +52,14 @@ public class PlayerController : GameCharacterController
 
     //============================================================
     //Methods
-    void GoToPosition(Vector3 position)
+    void GoToPosition(Vector3 newPosition)
     {
-        if(NavMeshAgent.isStopped)
+        if (NavMeshAgent.isStopped)
             NavMeshAgent.isStopped = false;
 
-        var distance = Vector3.Distance(this.transform.position, position);
+        var distance = Vector3.Distance(this.transform.position, newPosition);
 
-        if(distance > WalkToRunSwitchDistance)
+        if (distance > WalkToRunSwitchDistance)
         {
             NavMeshAgent.speed = RunSpeed;
             BodyAnimator.SetTrigger("Run");
@@ -66,7 +70,7 @@ public class PlayerController : GameCharacterController
             BodyAnimator.SetTrigger("Walk");
         }
 
-        NavMeshAgent.SetDestination(position);
+        NavMeshAgent.SetDestination(newPosition);
     }
 
     void StopPreviousActions()
@@ -100,7 +104,7 @@ public class PlayerController : GameCharacterController
 
     public void PickupThisItem(ItemController item)
     {
-        if(!CharacterIsDead)
+        if (!CharacterIsDead)
         {
             StopPreviousActions();
             _itemToPickup = item;
@@ -111,16 +115,19 @@ public class PlayerController : GameCharacterController
 
     public override void TakeDamage(int damage)
     {
-        base.TakeDamage(damage);
-        HealthBar.value = Health;
-
-        if/*now*/(CharacterIsDead)
+        if(!CharacterIsDead)
         {
-            StopPreviousActions();
-            NavMeshAgent.isStopped = true;
-            NavMeshAgent.velocity = Vector3.zero;
-            PlayerDied?.Invoke();
-            BodyAnimator.SetTrigger("Die");
+            base.TakeDamage(damage);
+            HealthBar.value = Health;
+
+            if/*now*/(CharacterIsDead)
+            {
+                StopPreviousActions();
+                NavMeshAgent.isStopped = true;
+                NavMeshAgent.velocity = Vector3.zero;
+                PlayerDied?.Invoke();
+                BodyAnimator.SetTrigger("Die");
+            }
         }
     }
 
@@ -170,16 +177,14 @@ public class PlayerController : GameCharacterController
         BodyAnimator.SetTrigger("Attack");
     }
 
-    Vector3 _bearLastPosition = Vector3.zero;
     IEnumerator KeepTrackingTheBear()
     {
-
         _bearLastPosition = _bearToAttack.transform.position;
         yield return _halfSecondWait;
 
-        while(Vector3.Distance(_bearToAttack.transform.position, this.transform.position) > AttackDistance && NavMeshAgent.isStopped == false)
+        while (Vector3.Distance(this.transform.position, _bearToAttack.transform.position) > AttackDistance && NavMeshAgent.isStopped == false)
         {
-            if(_bearLastPosition != _bearToAttack.transform.position)
+            if (_bearLastPosition != _bearToAttack.transform.position)
             {
                 _bearLastPosition = _bearToAttack.transform.position;
                 NavMeshAgent.SetDestination(_bearLastPosition);

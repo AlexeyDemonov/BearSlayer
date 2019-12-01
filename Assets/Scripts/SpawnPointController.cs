@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
 
-
 public class SpawnPointController : MonoBehaviour
 {
-
     //============================================================
     //Fields
     public Animator SpawnAnimator;
@@ -21,11 +19,11 @@ public class SpawnPointController : MonoBehaviour
     //Methods
     public void Spawn(GameObject objectToSpawn)
     {
-        var instance = Instantiate(/*what*/objectToSpawn, /*where*/this.transform.position, /*rotation*/Quaternion.Euler(x:0f, y:Random.Range(0f,360f), z:0f));
+        var instance = Instantiate(/*what*/objectToSpawn, /*where*/this.transform.position, /*rotation*/Quaternion.Euler(x: 0f, y: Random.Range(0f, 360f), z: 0f));
 
         var destroyTrigger = instance.GetComponent(typeof(IDestroyExtensioner)) as IDestroyExtensioner;
 
-        if(destroyTrigger != null)
+        if (destroyTrigger != null)
         {
             _currentInstance = destroyTrigger;
             _currentInstance.Destroying += UnattachInstance;
@@ -36,7 +34,7 @@ public class SpawnPointController : MonoBehaviour
 
     public void VacantThePoint()
     {
-        if(_currentInstance != null)
+        if (_currentInstance != null)
         {
             _currentInstance.Destroying -= UnattachInstance;
             _currentInstance.ForceDestroy();

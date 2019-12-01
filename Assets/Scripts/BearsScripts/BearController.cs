@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-using UnityEngine.AI;
+﻿using System;
 using System.Collections;
-using System;
+using UnityEngine;
+using UnityEngine.AI;
 
 public class BearController : GameCharacterController, IDestroyExtensioner
 {
@@ -13,8 +13,8 @@ public class BearController : GameCharacterController, IDestroyExtensioner
     public int StunTimes;
     public float DestroyAfterDeathSeconds;
 
-
     static PlayerController _playerController;
+
     float _detectionDistance;
     WaitForSeconds _detectionWait;
     Vector3 _currentPlayerPosition;
@@ -37,14 +37,11 @@ public class BearController : GameCharacterController, IDestroyExtensioner
     // Start is called before the first frame update
     void Start()
     {
-        if(_playerController == null)
+        if (_playerController == null)
             _playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
 
         _detectionDistance = UnityEngine.Random.Range(PlayerDetectionDistanceMin, PlayerDetectionDistanceMax);
         _detectionWait = new WaitForSeconds(TryDetectEveryXSeconds);
-
-        BodyAnimationEventProvider.Event_Attack += Handle_AttackAnimationEvent;
-        BodyAnimationEventProvider.Event_Damaged += Handle_DamagedAnimationEnded;
 
         StartCoroutine(TryDetectPlayer());
     }
@@ -53,7 +50,7 @@ public class BearController : GameCharacterController, IDestroyExtensioner
     {
         if (PlayerInAttackDistance)
         {
-            if(!_playerController.CharacterIsDead)
+            if (!_playerController.CharacterIsDead)
             {
                 _playerController.TakeDamage(Attack);
             }
@@ -74,7 +71,7 @@ public class BearController : GameCharacterController, IDestroyExtensioner
         {
             _stunCounter++;
         }
-        else if(_playerController.CharacterIsDead)
+        else if (_playerController.CharacterIsDead)
         {
             BodyAnimator.SetTrigger("Stop");
         }
@@ -88,12 +85,12 @@ public class BearController : GameCharacterController, IDestroyExtensioner
     public override void TakeDamage(int damage)
     {
         StopAllCoroutines();
-        
+
         base.TakeDamage(damage);
-        
+
         _stunCounter = 0;
 
-        if(!CharacterIsDead)
+        if (!CharacterIsDead)
         {
             BodyAnimator.SetTrigger("Damaged");
         }
@@ -130,7 +127,7 @@ public class BearController : GameCharacterController, IDestroyExtensioner
 
     void RunToPlayerAndAttack()
     {
-        if(NavMeshAgent.isStopped)
+        if (NavMeshAgent.isStopped)
             NavMeshAgent.isStopped = false;
 
         BodyAnimator.SetTrigger("Run");
@@ -140,18 +137,17 @@ public class BearController : GameCharacterController, IDestroyExtensioner
         StartCoroutine(AttackWhenReachPlayer());
     }
 
-
     IEnumerator AttackWhenReachPlayer()
     {
         while (!PlayerInAttackDistance)
         {
-            if(_playerController.transform.position != _currentPlayerPosition)
+            if (_playerController.transform.position != _currentPlayerPosition)
             {
                 _currentPlayerPosition = _playerController.transform.position;
                 NavMeshAgent.SetDestination(_currentPlayerPosition);
             }
 
-            yield return null;
+            yield return _detectionWait;
         }
 
         NavMeshAgent.velocity = Vector3.zero;

@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-
+﻿using System.Collections;
+using UnityEngine;
 
 public class PlayerInventoryController : MonoBehaviour
 {
@@ -13,10 +12,13 @@ public class PlayerInventoryController : MonoBehaviour
 
     [Range(0, 100)]
     public int HealthItemPower = 50;
+
     [Range(1, 100)]
     public int ArmorItemDefenseAddition = 5;
+
     [Range(1, 100)]
     public int SwordItemDamageAddition = 20;
+
     [Range(1f, 100f)]
     public float ItemDurationInSeconds = 5f;
 
@@ -42,10 +44,9 @@ public class PlayerInventoryController : MonoBehaviour
                 PlayerController.Health += HealthItemPower;
                 break;
 
-
             case ItemTypeEnum.ARMOR:
 
-                if(_armorDurationCoroutine == null)
+                if (_armorDurationCoroutine == null)
                 {
                     ArmorIndicator.SetActive(true);
                     PlayerController.Defense += ArmorItemDefenseAddition;
@@ -57,10 +58,9 @@ public class PlayerInventoryController : MonoBehaviour
 
                 break;
 
-
             case ItemTypeEnum.SWORD:
 
-                if(_swordDurationCoroutine == null)
+                if (_swordDurationCoroutine == null)
                 {
                     SwordIndicator.SetActive(true);
                     PlayerController.Attack += SwordItemDamageAddition;
@@ -76,13 +76,13 @@ public class PlayerInventoryController : MonoBehaviour
 
     void RemoveAllEffects()
     {
-        if(ArmorIndicator.activeSelf)
+        if (ArmorIndicator.activeSelf)
         {
             StopCoroutine(_armorDurationCoroutine);
             RemoveArmor();
         }
 
-        if(SwordIndicator.activeSelf)
+        if (SwordIndicator.activeSelf)
         {
             StopCoroutine(_swordDurationCoroutine);
             RemoveSword();

@@ -4,7 +4,7 @@ public class GameController : MonoBehaviour
 {
     public PlayerController PlayerController;
     public WaypointController WaypointController;
-        
+
     Camera _mainCamera;
     bool _gameIsRunning;
 
@@ -22,11 +22,11 @@ public class GameController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-	{
-		if(Input.GetButtonDown("Fire1") && _gameIsRunning)
+    {
+        if (Input.GetButtonDown("Fire1") && _gameIsRunning)
         {
             Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if(Physics.Raycast(ray, out RaycastHit hitInfo))
+            if (Physics.Raycast(ray, out RaycastHit hitInfo))
             {
                 var hittedObject = hitInfo.collider.gameObject;
                 string tag = hittedObject.tag;
@@ -50,5 +50,5 @@ public class GameController : MonoBehaviour
                 }
             }
         }
-	}
+    }
 }

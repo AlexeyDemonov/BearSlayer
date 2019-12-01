@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public interface IDestroyExtensioner : IDestroyReporter, IForceDestroyer
+﻿public interface IDestroyExtensioner : IDestroyReporter, IForceDestroyer
 {
 
 }
